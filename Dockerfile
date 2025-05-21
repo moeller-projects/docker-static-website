@@ -2,7 +2,7 @@ ARG ALPINE_VERSION=3.18.4
 
 FROM alpine:${ALPINE_VERSION} AS builder
 
-ARG BUSYBOX_VERSION=1.36.1
+ARG BUSYBOX_VERSION=1.37.0
 
 # Install all dependencies required for compiling busybox
 RUN apk add gcc musl-dev make perl
