@@ -35,5 +35,5 @@ jobs:
           outputs: "type=registry,push=true"
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
-            lipanski/docker-static-website:${{ env.TAG }}
-            lipanski/docker-static-website:latest
+            moellerprojects/docker-static-website:${{ env.TAG }}
+            moellerprojetcs/docker-static-website:latest
