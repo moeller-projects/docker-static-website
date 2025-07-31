@@ -41,7 +41,7 @@ FROM lipanski/docker-static-website:latest
 # Copy your static files
 COPY . .
 
-CMD ["/busybox-httpd", "-f", "-v", "-p", "3000", "-c", "httpd.conf"]
+CMD ["/busybox-httpd", "-f", "-v", "-p", "3000"]
 ```
 
 **NOTE:** Sending a `TERM` signal to your TTY running the container won't get propagated due to how busybox is built. Instead you can call `docker stop` (or `docker kill` if can't wait 15 seconds). Alternatively you can run the container with `docker run -it --rm --init` which will propagate signals to the process correctly.
@@ -98,6 +98,14 @@ Add a `httpd.conf` file, listing the paths that should be protected and the corr
 ```
 /admin:my-user:my-password # Require user my-user with password my-password whenever calling /admin
 ```
+
+### Where should I place the httpd.conf file?
+
+By default, the BusyBox server will look for a `httpd.conf` file under:
+
+- `/etc/httpd.conf`
+- project root
+- project subdirectories (used to configure path-specific behaviour)
 
 ### Where can I find the documentation for BusyBox httpd?
 
