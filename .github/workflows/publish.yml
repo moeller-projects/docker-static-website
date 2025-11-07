@@ -3,6 +3,10 @@ name: publish
 
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Docker image tag to publish (defaults to current UTC timestamp)"
+        required: false
   push:
     tags:
       - "*"
@@ -27,7 +31,26 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Set TAG
-        run: echo TAG=${GITHUB_REF#refs/tags/} >> $GITHUB_ENV
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          TAG_INPUT: ${{ github.event.inputs.tag }}
+          REF: ${{ github.ref }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            tag="$TAG_INPUT"
+            if [ -z "$tag" ]; then
+              tag="$(date -u '+%Y.%m.%d.%H%M')"
+            fi
+          else
+            if [[ "$REF" != refs/tags/* ]]; then
+              echo "publish workflow expects to run on tag refs, got: $REF" >&2
+              exit 1
+            fi
+            tag="${REF#refs/tags/}"
+          fi
+          tag="${tag//\//-}"
+          echo "TAG=$tag" >> "$GITHUB_ENV"
 
       - name: Publish Image
         uses: docker/build-push-action@v3
