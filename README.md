@@ -143,7 +143,7 @@ make allnoconfig
 
 Copy the resulting `.config` to this project, diff it against the old one and re-enable everything that seems reasonable (mostly the `HTTPD` features).
 
-Uncomment the `COPY . .` line in the `Dockerfile`, add a dummy `index.html` and build a test image:
+Uncomment the `COPY . .` line in the `Dockerfile`, use the provided `index.html` (or replace it with your own content) and build a test image:
 
 ```
 docker build -t docker-static-website-test .
@@ -155,7 +155,11 @@ Then run it:
 docker run -it --rm --init -p 3000:3000 docker-static-website-test
 ```
 
-Browse to `http://localhost:3000` and check that the contents of the `index.html` file were rendered correctly.
+Browse to `http://localhost:3000` and confirm that the bundled `index.html` was rendered correctly.
+
+### Compatibility checks
+
+The `test-build` GitHub Actions workflow exercises the Dockerfile with the latest BusyBox release to ensure `make_single_applets.sh` continues to work with upstream changes. Trigger it from the Actions tab (`Run workflow`) or let it run automatically on pull requests.
 
 ## Release
 

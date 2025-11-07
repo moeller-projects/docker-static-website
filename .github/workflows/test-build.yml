@@ -1,0 +1,32 @@
+# Performs a compatibility build using the latest BusyBox release.
+name: test-build
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Determine latest BusyBox version
+        id: busybox
+        run: |
+          set -euo pipefail
+          latest="$(curl -s https://busybox.net/downloads/ \
+            | grep -o 'busybox-[0-9.]*\.tar\.bz2' \
+            | sed 's/^busybox-//' \
+            | sed 's/\.tar\.bz2$//' \
+            | sort -V \
+            | tail -n 1)"
+          if [ -z "$latest" ]; then
+            echo "Unable to determine latest BusyBox version" >&2
+            exit 1
+          fi
+          echo "version=$latest" >> "$GITHUB_OUTPUT"
+
+      - name: Build image with latest BusyBox
+        run: docker build --build-arg BUSYBOX_VERSION="${{ steps.busybox.outputs.version }}" .
