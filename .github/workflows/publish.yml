@@ -29,7 +29,7 @@ jobs:
       - name: Set TAG
         run: echo TAG=${GITHUB_REF#refs/tags/} >> $GITHUB_ENV
 
-      - name: Publish ${{ matrix.svc }}
+      - name: Publish Image
         uses: docker/build-push-action@v3
         with:
           file: Dockerfile
@@ -37,4 +37,4 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           tags: |
             moellerprojects/docker-static-website:${{ env.TAG }}
-            moellerprojetcs/docker-static-website:latest
+            moellerprojects/docker-static-website:latest
